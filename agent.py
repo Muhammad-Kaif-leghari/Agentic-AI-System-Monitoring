@@ -21,15 +21,31 @@ def get_cpu_utilization() -> str:
 
 def get_ram_utilization() -> str:
     """
-    Checks and returns the current RAM (Memory) usage percentage of the local computer.
-    Use this tool whenever the user asks about memory, RAM, background apps consuming space,
-    or if they ask if they have enough free memory left to run programs.
+    Checks and returns both the current RAM utilization and the total installed RAM capacity.
+    Use this tool whenever the user asks about memory, RAM, total RAM, hardware capacity, 
+    specifications, background apps consuming space, or free memory.
     """
     ram_info = psutil.virtual_memory()
-    return f"Current Ram Usage is: {ram_info.percent}% (Used {ram_info.used / (1024**3):.2f} GB / Total: {ram_info.total / (1024**3): .2f} GB)" 
+    percent = ram_info.percent
+    used_ram_info = ram_info.used / (1024**3)
+    total_ram_info = ram_info.total / (1024**3)
+    return f"Current Ram Usage is: {percent}% | (Used RAM: {used_ram_info:.2f} GB / Total Installed RAM: {total_ram_info:.2f} GB)" 
 
-# We pass our Python function inside a list to the config object
-agent_tools = [get_cpu_utilization, get_ram_utilization]
+def get_storage_metrics() -> str:
+    """
+    Checks and returns the local hard drive storage metrics (Disk capacity and availability).
+    Use this tool whenever the user asks about disk space, hard drive, storage, C: drive,
+    remaining space, or full disk capacity.
+    """
+    disk_info = psutil.disk_usage("C:\\")
+    used_space_gb =  disk_info.used / (1024**3)
+    total_space_gb = disk_info.total / (1024**3)
+    free_space_gb =  disk_info.free / (1024**3)
+    percent = disk_info.percent
+    return f"C:\\ Drive Status: Total Capacity {total_space_gb:.2f} GB | Used Space: {used_space_gb:.2f} GB | Free space available: {free_space_gb:.2f} GB | Percent usage total: {percent}% "
+
+# Pass Python function inside a list to the config object
+agent_tools = [get_cpu_utilization, get_ram_utilization, get_storage_metrics]
 print("\n")
 print("System Monitoring Agent is Online! Type 'exit', 'quit', 'q' or 'close' to stop.")
 print("-" * 50)
